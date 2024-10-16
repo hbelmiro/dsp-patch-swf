@@ -7,14 +7,14 @@ OLD_DRIVER_IMAGE="registry.redhat.io/rhoai/odh-ml-pipelines-driver-rhel8@sha256:
 # Replace with the above image that's from 2.13
 #OLD_DRIVER_IMAGE="quay.io/opendatahub/ds-pipelines-driver@sha256:ea1ceae99e7a4768da104076915b5271e88fd541e4f804aafee8798798db991d"
 
-NEW_DRIVER_IMAGE="registry.redhat.io/rhoai/odh-ml-pipelines-driver-rhel8@sha256:307d8fb3582dcf32c056474569fb046c4812d681f573eae2227dc763b4efb501"
+NEW_DRIVER_IMAGE="registry.redhat.io/rhoai/odh-ml-pipelines-driver-rhel8@sha256:78d5f5a81a3f0ee0b918dc2dab7ffab5b43fec94bd553ab4362f2216eef39688"
 
 OLD_LAUNCHER_IMAGE="registry.redhat.io/rhoai/odh-ml-pipelines-launcher-rhel8@sha256:e8aa5ae0a36dc50bdc740d6d9753b05f2174e68a7edbd6c5b0ce3afd194c7a6e"
 
 # Replace with the above image that's from 2.13
 #OLD_LAUNCHER_IMAGE="quay.io/opendatahub/ds-pipelines-launcher@sha256:1a6b6328d30036ffd399960b84db4a306522f92f6ef8e8d2a0f88f112d401a7d"
 
-NEW_LAUNCHER_IMAGE="registry.redhat.io/rhoai/odh-ml-pipelines-launcher-rhel8@sha256:345f2c57c2cdc43f43d5ed890849077a9b506564df8311fa109c472743b2afac"
+NEW_LAUNCHER_IMAGE="registry.redhat.io/rhoai/odh-ml-pipelines-launcher-rhel8@sha256:3a3ba3c4952dc9020a8a960bdd3c0b2f16ca89ac15fd17128a00c382f39cba81"
 
 patch_image() {
     local workflow_spec=$1

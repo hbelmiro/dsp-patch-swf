@@ -2,33 +2,14 @@
 
 set -e
 
-# RHOAI
-OLD_DRIVER_IMAGE="registry.redhat.io/rhoai/odh-ml-pipelines-driver-rhel8@sha256:16a711ba5c770c3b93e9a5736735f972df9451a9a1903192fcb486aa929a44b7"
+OLD_DRIVER_IMAGE="registry.redhat.io/rhoai/odh-ml-pipelines-driver-rhel8@sha256:78d5f5a81a3f0ee0b918dc2dab7ffab5b43fec94bd553ab4362f2216eef39688"
+NEW_DRIVER_IMAGE="registry.redhat.io/rhoai/odh-ml-pipelines-driver-rhel8@sha256:4fce7736a6058110e56aacec3a0d5286a10b2644ced002662718280c69f7d9f3"
 
-# ODH
-#OLD_DRIVER_IMAGE="quay.io/opendatahub/ds-pipelines-driver@sha256:ea1ceae99e7a4768da104076915b5271e88fd541e4f804aafee8798798db991d"
-
-# RHOAI
-NEW_DRIVER_IMAGE="registry.redhat.io/rhoai/odh-ml-pipelines-driver-rhel8@sha256:78d5f5a81a3f0ee0b918dc2dab7ffab5b43fec94bd553ab4362f2216eef39688"
-
-# ODH
-#NEW_DRIVER_IMAGE="quay.io/opendatahub/ds-pipelines-driver:latest"
-
-# RHOAI
-OLD_LAUNCHER_IMAGE="registry.redhat.io/rhoai/odh-ml-pipelines-launcher-rhel8@sha256:e8aa5ae0a36dc50bdc740d6d9753b05f2174e68a7edbd6c5b0ce3afd194c7a6e"
-
-# ODH
-#OLD_LAUNCHER_IMAGE="quay.io/opendatahub/ds-pipelines-launcher@sha256:1a6b6328d30036ffd399960b84db4a306522f92f6ef8e8d2a0f88f112d401a7d"
-
-# RHOAI
-NEW_LAUNCHER_IMAGE="registry.redhat.io/rhoai/odh-ml-pipelines-launcher-rhel8@sha256:3a3ba3c4952dc9020a8a960bdd3c0b2f16ca89ac15fd17128a00c382f39cba81"
-
-# ODH
-#NEW_LAUNCHER_IMAGE="quay.io/opendatahub/ds-pipelines-launcher:latest"
+OLD_LAUNCHER_IMAGE="registry.redhat.io/rhoai/odh-ml-pipelines-launcher-rhel8@sha256:3a3ba3c4952dc9020a8a960bdd3c0b2f16ca89ac15fd17128a00c382f39cba81"
+NEW_LAUNCHER_IMAGE="registry.redhat.io/rhoai/odh-ml-pipelines-launcher-rhel8@sha256:df79da94e81dad3ee6ede25cd98067649ce5736c2fb9bdbf4dec72ac24209003"
 
 NAMESPACE=""
 
-# Parse named parameter
 while [[ "$#" -gt 0 ]]; do
     case $1 in
         --namespace) NAMESPACE="$2"; shift ;;
@@ -37,7 +18,6 @@ while [[ "$#" -gt 0 ]]; do
     shift
 done
 
-# Check if namespace is provided
 if [ -z "${NAMESPACE}" ]; then
     echo "Error: --namespace parameter is required."
     echo "Usage: $0 --namespace <namespace>"
@@ -101,8 +81,6 @@ patch_swf() {
     workflow_spec=$(patch_image "${workflow_spec}" "${OLD_LAUNCHER_IMAGE}" "${NEW_LAUNCHER_IMAGE}")
 
     dspa=$(oc get swf "${swf_name}" -o yaml -n "${NAMESPACE}" | yq '.metadata.ownerReferences[] | select(.kind == "DataSciencePipelinesApplication") | .name')
-
-    workflow_spec=$(add_arguments "${workflow_spec}" "${NEW_DRIVER_IMAGE}" "${dspa}")
 
     workflow_spec=$(echo -n "${workflow_spec}" | jq -c | jq -Rsa)
 

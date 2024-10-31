@@ -37,40 +37,6 @@ patch_image() {
     echo "${patched_workflow_spec}"
 }
 
-add_arguments() {
-    local workflow_spec=$1
-    local driver_image=$2
-    local dspa=$3
-
-    local new_args
-    local server_address
-    local port
-
-    port=$(oc get service ds-pipeline-metadata-grpc-"${dspa}" -o jsonpath='{.spec.ports[*].port}' -n "${NAMESPACE}")
-
-    server_address="ds-pipeline-metadata-grpc-${dspa}.${NAMESPACE}.svc.cluster.local"
-
-    new_args="[
-        \"--mlmd_server_address\", \"${server_address}\",
-        \"--mlmd_server_port\", \"${port}\",
-        \"--metadataTLSEnabled\", \"true\"
-    ]"
-
-    updated_json=$(jq --arg image "${driver_image}" --argjson new_args "$new_args" '
-      .spec.templates[].container |= if .image == $image then
-          if (.args | index("--mlPipelineServiceTLSEnabled") as $i | if $i then .[$i + 1] == "true" else true end) then
-              .args += $new_args
-          else
-              .
-          end
-        else
-          .
-        end
-    ' <<< "${workflow_spec}")
-
-    echo "$updated_json"
-}
-
 patch_swf() {
     local swf_name=$1
 
@@ -79,8 +45,6 @@ patch_swf() {
     workflow_spec=$(oc get -oyaml swf "${swf_name}" -n "${NAMESPACE}" | yq .spec.workflow.spec)
     workflow_spec=$(patch_image "${workflow_spec}" "${OLD_DRIVER_IMAGE}" "${NEW_DRIVER_IMAGE}")
     workflow_spec=$(patch_image "${workflow_spec}" "${OLD_LAUNCHER_IMAGE}" "${NEW_LAUNCHER_IMAGE}")
-
-    dspa=$(oc get swf "${swf_name}" -o yaml -n "${NAMESPACE}" | yq '.metadata.ownerReferences[] | select(.kind == "DataSciencePipelinesApplication") | .name')
 
     workflow_spec=$(echo -n "${workflow_spec}" | jq -c | jq -Rsa)
 
